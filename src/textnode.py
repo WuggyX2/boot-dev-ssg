@@ -3,19 +3,24 @@ TextNode class represents a node in the AST that contains text content.
 
 """
 
-from typing import Self, TypeAlias, Literal
+from typing import Self, TypeAlias, Literal, List, get_args
 from types import NotImplementedType
 from htmlnode import LeafNode
+
+TextType: TypeAlias = Literal["text", "bold", "italic", "code", "link", "image"]
+SplittableTextType: TypeAlias = Literal["bold", "italic", "code"]
+Url: TypeAlias = str | None
 
 
 class TextNode:
     """
 
-    Attributes: 
-        text: The text content of the node 
+    Attributes:
+        text: The text content of the node
         text_type: The type of text this node contains
         url: The URL of the link or image, if the text is a link. Default to None
     """
+
     def __init__(self, text, text_type, url=None):
         self.text: str = text
         self.text_type: TextType = text_type
@@ -38,8 +43,8 @@ class TextNode:
     def __repr__(self: Self) -> str:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
-def text_node_to_html_node(text_node: TextNode ) -> LeafNode:
 
+def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     """
         Transforms a TextNode to a LeafNode or HTMLNode.
         If type is image HTML node is returned, otherwise LeafNode is returned.
@@ -51,7 +56,7 @@ def text_node_to_html_node(text_node: TextNode ) -> LeafNode:
         ValueError: if text type does not match values defined in TextType alias
 
     Returns:
-        
+
     """
     match text_node.text_type:
         case "text":
@@ -69,5 +74,48 @@ def text_node_to_html_node(text_node: TextNode ) -> LeafNode:
         case _:
             raise ValueError("TextNode has an invalid text type")
 
-TextType: TypeAlias = Literal["text", "bold", "italic", "code", "link", "image"]
-Url: TypeAlias = str | None
+
+def split_nodes_delimiter(
+    old_nodes: List[TextNode], delimiter: str, text_type: SplittableTextType
+) -> List[TextNode]:
+    """
+    Args:
+        old_nodes:
+        delimiter:
+        text_type:
+
+    Returns:
+
+    """
+    new_nodes: List[TextNode] = []
+
+    if not text_type in get_args(SplittableTextType):
+        raise ValueError("Invalid text type")
+
+    for node in old_nodes:
+        if node.text_type == "text":
+            splitted_text = node.text.split(delimiter)
+            if len(splitted_text) % 2 == 0:
+                raise Exception("Invalid markdown syntax, delimiter not closed")
+
+            for i, text in enumerate(splitted_text):
+                if len(text) == 0:
+                    continue
+
+                if i % 2 == 0:
+                    new_nodes.append(TextNode(text, "text"))
+                else:
+                    new_nodes.append(TextNode(text, text_type))
+
+        else:
+            new_nodes.append(node)
+
+    return new_nodes
+
+
+# def extract_markdown_images(text: str) -> List[tuple[str, str]]:
+#     pass
+#
+#
+# def extract_markdown_links(text: str) -> List[tuple[str, str]]:
+#     pass
