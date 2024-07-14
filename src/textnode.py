@@ -3,6 +3,7 @@ TextNode class represents a node in the AST that contains text content.
 
 """
 
+import re
 from typing import Self, TypeAlias, Literal, List, get_args
 from types import NotImplementedType
 from htmlnode import LeafNode
@@ -79,10 +80,14 @@ def split_nodes_delimiter(
     old_nodes: List[TextNode], delimiter: str, text_type: SplittableTextType
 ) -> List[TextNode]:
     """
+    Method for splitting text nodes by a delimiter. The text nodes are split
+    into two types of text nodes,one with the delimiter and the other without the delimiter.
+    The delimiter text nodes are of the type specified in the text_type argument.
+
     Args:
-        old_nodes:
-        delimiter:
-        text_type:
+        old_nodes: List of TextNodes to be split
+        delimiter: Delimiter to split the text
+        text_type: Type of text to be split
 
     Returns:
 
@@ -113,9 +118,36 @@ def split_nodes_delimiter(
     return new_nodes
 
 
-# def extract_markdown_images(text: str) -> List[tuple[str, str]]:
-#     pass
-#
-#
-# def extract_markdown_links(text: str) -> List[tuple[str, str]]:
-#     pass
+def extract_markdown_images(text: str) -> List[tuple[str, str]]:
+    """
+    Method for extacting image data from markdown text
+
+    Args:
+        text: text where images are to be extracted
+
+    Returns: List of tuples containing image alt text and image URL
+
+    """
+    results: List[tuple[str, str]] = []
+
+    matches = re.findall(r"!\[(.*?)]\((.+?)\)", text)
+    results.extend(matches)
+
+    return results
+
+
+def extract_markdown_links(text: str) -> List[tuple[str, str]]:
+    """
+    Method for extracting link data from markdown text
+    Args:
+        text: text where links are to be extracted
+
+    Returns: List of tuples containing link text and link URL
+        
+    """
+    results: List[tuple[str, str]] = []
+
+    matches = re.findall(r"[^!]\[(.*?)]\((.+?)\)", text)
+    results.extend(matches)
+
+    return results
