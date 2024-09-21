@@ -3,8 +3,7 @@ TextNode class represents a node in the AST that contains text content.
 
 """
 
-import re
-from typing import Self, TypeAlias, Literal, List, get_args
+from typing import Self, TypeAlias, Literal
 from types import NotImplementedType
 from htmlnode import LeafNode
 
@@ -74,80 +73,3 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             return LeafNode("img", "", {"src": text_node.url})
         case _:
             raise ValueError("TextNode has an invalid text type")
-
-
-def split_nodes_delimiter(
-    old_nodes: List[TextNode], delimiter: str, text_type: SplittableTextType
-) -> List[TextNode]:
-    """
-    Method for splitting text nodes by a delimiter. The text nodes are split
-    into two types of text nodes,one with the delimiter and the other without the delimiter.
-    The delimiter text nodes are of the type specified in the text_type argument.
-
-    Args:
-        old_nodes: List of TextNodes to be split
-        delimiter: Delimiter to split the text
-        text_type: Type of text to be split
-
-    Returns:
-
-    """
-    new_nodes: List[TextNode] = []
-
-    if not text_type in get_args(SplittableTextType):
-        raise ValueError("Invalid text type")
-
-    for node in old_nodes:
-        if node.text_type == "text":
-            splitted_text = node.text.split(delimiter)
-            if len(splitted_text) % 2 == 0:
-                raise Exception("Invalid markdown syntax, delimiter not closed")
-
-            for i, text in enumerate(splitted_text):
-                if len(text) == 0:
-                    continue
-
-                if i % 2 == 0:
-                    new_nodes.append(TextNode(text, "text"))
-                else:
-                    new_nodes.append(TextNode(text, text_type))
-
-        else:
-            new_nodes.append(node)
-
-    return new_nodes
-
-
-def extract_markdown_images(text: str) -> List[tuple[str, str]]:
-    """
-    Method for extacting image data from markdown text
-
-    Args:
-        text: text where images are to be extracted
-
-    Returns: List of tuples containing image alt text and image URL
-
-    """
-    results: List[tuple[str, str]] = []
-
-    matches = re.findall(r"!\[(.*?)]\((.+?)\)", text)
-    results.extend(matches)
-
-    return results
-
-
-def extract_markdown_links(text: str) -> List[tuple[str, str]]:
-    """
-    Method for extracting link data from markdown text
-    Args:
-        text: text where links are to be extracted
-
-    Returns: List of tuples containing link text and link URL
-        
-    """
-    results: List[tuple[str, str]] = []
-
-    matches = re.findall(r"[^!]\[(.*?)]\((.+?)\)", text)
-    results.extend(matches)
-
-    return results

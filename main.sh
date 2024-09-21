@@ -1,1 +1,1 @@
-python3.11 src/main.py
+python src/main.py
