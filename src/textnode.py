@@ -9,6 +9,7 @@ from htmlnode import LeafNode
 
 TextType: TypeAlias = Literal["text", "bold", "italic", "code", "link", "image"]
 SplittableTextType: TypeAlias = Literal["bold", "italic", "code"]
+BlockType: TypeAlias = Literal["paragraph", "heading", "code", "quote", "unordered_list", "ordered_list"]
 Url: TypeAlias = str | None
 
 
