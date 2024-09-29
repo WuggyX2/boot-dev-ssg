@@ -78,7 +78,7 @@ def is_unordered_list_block(block: str) -> bool:
     lines = block.split("\n")
 
     for line in lines:
-        if not line.startswith("-") and not line.startswith("*"):
+        if not line.startswith("- ") and not line.startswith("* "):
             return False
 
     return True

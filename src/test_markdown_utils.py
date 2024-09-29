@@ -45,8 +45,10 @@ class TestMarkdownUtils(TestCase):
         """
         test_cases = [
             ("", False),
-            ("-", True),
-            ("*", True),
+            ("- ", True),
+            ("* ", True),
+            ("-", False),
+            ("*", False),
             ("* this is a list block", True),
             ("- this is a list block", True),
             ("* this is a list block\n- this is a list block", True),
@@ -66,7 +68,7 @@ class TestMarkdownUtils(TestCase):
         """
         test_cases = [
             ("", False),
-            ("1.", True),
+            ("1. ", True),
             ("1. this is a list block", True),
             ("1. this is a list block\n2. this is a list block", True),
             ("1. this is a list block\nthis is not a list block", False),

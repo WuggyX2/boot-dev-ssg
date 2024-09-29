@@ -43,7 +43,9 @@ def split_nodes_delimiter(
         if node.text_type == "text":
             splitted_text = node.text.split(delimiter)
             if len(splitted_text) % 2 == 0:
-                raise Exception("Invalid markdown syntax, delimiter not closed")
+                raise Exception(
+                    f'Invalid markdown syntax, delimiter "{delimiter}" not closed'
+                )
 
             for i, text in enumerate(splitted_text):
                 if len(text) == 0:
@@ -277,7 +279,7 @@ def block_to_html_node(block: str) -> HTMLNode:
         ValueError: if the block type is invalid
 
     Returns:
-        
+
     """
     block_type = block_to_block_type(block)
     if block_type == "paragraph":
@@ -303,7 +305,7 @@ def text_to_children(text: str) -> List[HTMLNode]:
         text: text to be converted
 
     Returns: list of HTML nodes
-        
+
     """
     text_nodes = text_to_textnodes(text)
     children = []

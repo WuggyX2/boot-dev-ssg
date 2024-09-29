@@ -78,7 +78,7 @@ class LeafNode(HTMLNode):
 
         """
 
-        if not self.value:
+        if self.value is None:
             raise ValueError("LeafNode must have a value")
 
         if not self.tag:
