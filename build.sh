@@ -1,1 +1,1 @@
-python3 src/main.py "/WuggyX2/boot-dev-ssg/"
+python3 src/m/boot-dev-ssg/"
