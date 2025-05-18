@@ -206,7 +206,7 @@ def text_to_textnodes(text: str) -> List[TextNode]:
     markdown_nodes: List[tuple[str, SplittableTextType]] = [
         ("`", "code"),
         ("**", "bold"),
-        ("*", "italic"),
+        ("_", "italic"),
     ]
 
     for delimiter, text_type in markdown_nodes:
