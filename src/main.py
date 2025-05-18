@@ -1,10 +1,11 @@
 import os
 import re
+import sys
 from shutil import rmtree, copy
 from markdown_handler import markdown_to_html_node
 
 
-def copy_static(path: str = "static", dest: str = "public") -> None:
+def copy_static(path: str, dest: str) -> None:
     """
     A recursive function that copies the contents of the given folder to a public folder.
     By default the static folder at root is used.
@@ -51,7 +52,7 @@ def extract_title(markdown: str) -> str:
     raise Exception("Title not found")
 
 
-def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str) -> None:
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str, base_path: str) -> None:
 
     if not os.path.exists(dir_path_content):
         raise Exception("source file does not exist")
@@ -67,7 +68,7 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
 
         if os.path.isdir(item_path):
             dest_folder_path = os.path.join(dest_dir_path, item)
-            generate_pages_recursive(item_path, template_path, dest_folder_path)
+            generate_pages_recursive(item_path, template_path, dest_folder_path, base_path)
         elif item.endswith(".md"):
             item_name = os.path.splitext(item)[0]
             dest_path = os.path.join(dest_dir_path, item_name + ".html")
@@ -81,17 +82,25 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
                     template = template_file.read()
                     template = template.replace("{{ Title }}", title)
                     template = template.replace("{{ Content }}", html.to_html())
+                    template = template.replace('href="/', f'href="{base_path}')
+                    template = template.replace('src="/', f'src="{base_path}')
 
                     with open(dest_path, "w", encoding="utf-8") as output_file:
                         output_file.write(template)
 
 
+def get_basepath() -> str:
+    if len(sys.argv) < 2:
+        return "/"
+
+    return sys.argv[1]
 
 
 def main():
     """Main function for the program"""
-    copy_static()
-    generate_pages_recursive("content", "template.html", "public")
+    base_path = get_basepath()
+    copy_static("static", "docs")
+    generate_pages_recursive("content", "template.html", "docs", base_path)
 
 
 main()
